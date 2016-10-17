@@ -156,6 +156,7 @@ public class CharacterActivity extends BaseActivity {
         if(actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
     }
 
     private void initCharacterData(){
