@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_drawer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.fragments.CharacterListFragment">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/main_coordinator_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_primary"
+            android:fitsSystemWindows="true"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapsing_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
+                app:collapsedTitleGravity="center_vertical"
+                app:contentScrim="@color/color_primary"
+                app:expandedTitleGravity="center|bottom"
+                app:expandedTitleMarginBottom="@dimen/spacing_larger_72"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fitsSystemWindows="true">
+
+                    <ImageView
+                        android:id="@+id/home_main_iv"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:fitsSystemWindows="true"
+                        android:src="@drawable/stark"/>
+
+                </FrameLayout>
+
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_collapseMode="pin"
+                    app:popupTheme="@style/AppTheme.PopupOverlay"
+                    app:theme="@style/ToolBarStyle"
+                    app:titleTextColor="@color/white"
+                    />
+
+            </android.support.design.widget.CollapsingToolbarLayout>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.NestedScrollView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/nested_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            >
+
+            <LinearLayout
+                android:id="@+id/main_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_normal_16"
+                android:layout_marginTop="@dimen/spacing_normal_16"
+                android:orientation="vertical">
+
+                <!--  Words -->
+                <FrameLayout
+                    android:id="@+id/words_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_small_8">
+
+                    <ImageView
+                        android:id="@+id/home_1_iv"
+                        android:layout_width="@dimen/size_small_20"
+                        android:layout_height="@dimen/size_small_20"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/spacing_normal_16"
+                        android:src="@drawable/stark_icon"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/spacing_bigger_44"
+                        android:fontFamily="@string/ff_regular"
+                        android:text="Words:"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_normal_16"/>
+
+                    <TextView
+                        android:id="@+id/words_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="120dp"
+                        android:fontFamily="@string/ff_regular"
+                        android:text="error"
+                        android:textColor="@color/grey"
+                        android:textSize="@dimen/font_normal_14"/>
+                </FrameLayout>
+
+                <!-- Born -->
+                <FrameLayout
+                    android:id="@+id/born_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_small_8">
+
+                    <ImageView
+                        android:id="@+id/home_2_iv"
+                        android:layout_width="@dimen/size_small_20"
+                        android:layout_height="@dimen/size_small_20"
+                        android:layout_marginLeft="@dimen/spacing_normal_16"
+                        android:src="@drawable/stark_icon"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/spacing_bigger_44"
+                        android:fontFamily="@string/ff_regular"
+                        android:text="Born:"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_normal_16"/>
+
+                    <TextView
+                        android:id="@+id/born_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="120dp"
+                        android:fontFamily="@string/ff_regular"
+                        android:text="error"
+                        android:textColor="@color/grey"
+                        android:textSize="@dimen/font_normal_14"/>
+                </FrameLayout>
+
+                <!-- Died -->
+                <FrameLayout
+                    android:id="@+id/died_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_small_8">
+
+                    <ImageView
+                        android:id="@+id/home_3_iv"
+                        android:layout_width="@dimen/size_small_20"
+                        android:layout_height="@dimen/size_small_20"
+                        android:layout_marginLeft="@dimen/spacing_normal_16"
+                        android:src="@drawable/stark_icon"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/spacing_bigger_44"
+                        android:fontFamily="@string/ff_regular"
+                        android:text="Born:"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_normal_16"/>
+
+                    <TextView
+                        android:id="@+id/died_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="120dp"
+                        android:fontFamily="@string/ff_regular"
+                        android:text="error"
+                        android:textColor="@color/grey"
+                        android:textSize="@dimen/font_normal_14"/>
+                </FrameLayout>
+
+                <!-- Titles -->
+                <FrameLayout
+                    android:id="@+id/titles_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_small_8">
+
+                    <ImageView
+                        android:id="@+id/home_4_iv"
+                        android:layout_width="@dimen/size_small_20"
+                        android:layout_height="@dimen/size_small_20"
+                        android:layout_marginLeft="@dimen/spacing_normal_16"
+                        android:src="@drawable/stark_icon"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/spacing_bigger_44"
+                        android:fontFamily="@string/ff_regular"
+                        android:text="Titles:"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_normal_16"/>
+
+                    <TextView
+                        android:id="@+id/titles_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="120dp"
+                        android:fontFamily="@string/ff_regular"
+                        android:text="error"
+                        android:textColor="@color/grey"
+                        android:textSize="@dimen/font_normal_14"/>
+                </FrameLayout>
+
+                <!-- Aliases -->
+                <FrameLayout
+                    android:id="@+id/aliases_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_small_8">
+
+                    <ImageView
+                        android:id="@+id/home_5_iv"
+                        android:layout_width="@dimen/size_small_20"
+                        android:layout_height="@dimen/size_small_20"
+                        android:layout_marginLeft="@dimen/spacing_normal_16"
+                        android:src="@drawable/stark_icon"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/spacing_bigger_44"
+                        android:fontFamily="@string/ff_regular"
+                        android:text="Aliases:"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_normal_16"/>
+
+                    <TextView
+                        android:id="@+id/aliases_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="120dp"
+                        android:fontFamily="@string/ff_regular"
+                        android:text="error"
+                        android:textColor="@color/grey"
+                        android:textSize="@dimen/font_normal_14"/>
+                </FrameLayout>
+
+
+                <!-- Buttons -->
+                <FrameLayout
+                    android:id="@+id/father_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_normal_16"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/spacing_bigger_44"
+                        android:fontFamily="@string/ff_regular"
+                        android:text="Father:"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_normal_16"/>
+
+                    <Button
+                        android:id="@+id/father_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/font_medium_34"
+                        android:layout_marginLeft="120dp"
+                        android:background="@drawable/rounded_button"
+                        android:paddingLeft="@dimen/spacing_small_8"
+                        android:paddingRight="@dimen/spacing_small_8"
+                        android:text="error"
+                        android:textColor="@color/white"
+                        />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/mother_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_normal_16"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/spacing_bigger_44"
+                        android:fontFamily="@string/ff_regular"
+                        android:text="Mother:"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_normal_16"/>
+
+                    <Button
+                        android:id="@+id/mother_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/font_medium_34"
+                        android:layout_marginLeft="120dp"
+                        android:background="@drawable/rounded_button"
+                        android:paddingLeft="@dimen/spacing_small_8"
+                        android:paddingRight="@dimen/spacing_small_8"
+                        android:text="error"
+                        android:textColor="@color/white"/>
+                </FrameLayout>
+            </LinearLayout>
+
+
+        </android.support.v4.widget.NestedScrollView>
+
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <!-- Navigation drawer -->
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        app:headerLayout="@layout/drawer_header"
+        app:menu="@menu/drawer_menu">
+
+    </android.support.design.widget.NavigationView>
+
+</android.support.v4.widget.DrawerLayout>

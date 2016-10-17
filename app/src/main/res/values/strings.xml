@@ -1,0 +1,12 @@
+<resources>
+
+    <!--Font Family-->
+    <string name="ff_regular">sans-serif</string>
+    <string name="ff_medium">sans-serif-medium</string>
+
+
+    <string name="app_name">AleksandrYurkovskiy</string>
+    <string name="dev_name">AleksandrYurkovskiy</string>
+
+
+</resources>
