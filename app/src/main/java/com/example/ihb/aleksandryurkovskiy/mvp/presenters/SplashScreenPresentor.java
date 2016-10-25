@@ -45,6 +45,9 @@ public class SplashScreenPresentor implements ISplashScreenPresentor {
 
     @Override
     public void initView() {
+        if(getView()!=null){
+            getView().showLoad();
+        }
     }
 
     @Nullable
@@ -53,15 +56,9 @@ public class SplashScreenPresentor implements ISplashScreenPresentor {
         return mSplashScreenView;
     }
 
-    @Override
-    public void onResume() {
-        if(getView()!=null) {
-            getView().showLoad();
-        }
-    }
-
     public void dataPrepared(){
         if(getView()!=null){
+            //getView().hideLoad();
             getView().startActivityAndFinish(HomesTabsActivity.class);
         }
     }

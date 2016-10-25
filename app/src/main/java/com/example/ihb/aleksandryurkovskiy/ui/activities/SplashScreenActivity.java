@@ -35,18 +35,6 @@ public class SplashScreenActivity extends BaseActivity implements ISplashScreenV
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        showProgress();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        hideProgress();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         mPresenter.dropView();

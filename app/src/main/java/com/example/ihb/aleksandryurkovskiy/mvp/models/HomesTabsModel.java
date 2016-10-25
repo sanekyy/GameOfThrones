@@ -2,8 +2,6 @@ package com.example.ihb.aleksandryurkovskiy.mvp.models;
 
 import com.example.ihb.aleksandryurkovskiy.data.managers.DataManager;
 import com.example.ihb.aleksandryurkovskiy.data.storage.models.Character;
-import com.example.ihb.aleksandryurkovskiy.ui.adapters.CharactersAdapter;
-import com.example.ihb.aleksandryurkovskiy.ui.fragments.CharacterListRetainFragment;
 import com.example.ihb.aleksandryurkovskiy.utils.ConstantManager;
 
 import java.util.List;
@@ -13,11 +11,6 @@ import java.util.List;
  */
 
 public class HomesTabsModel {
-
-    private CharactersAdapter mCharactersAdapter;
-    private List<Character> mCharacters;
-    private CharacterListRetainFragment mRetainFragment;
-    
     private List<Character> mStarksList;
     private List<Character> mLannistersList;
     private List<Character> mTargaryensList;
