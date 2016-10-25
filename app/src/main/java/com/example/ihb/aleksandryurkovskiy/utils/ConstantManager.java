@@ -14,6 +14,12 @@ public interface ConstantManager {
     int STARKS_POPULATION = 88;
     int LANNISTERS_POPULATION = 79;
     int TARGARYENS_POPULATION = 101;
-    String PARCELABLE_KEY = "PARCELABLE_KEY";
-    int LAST_PAGE = 111;
+
+    int OPEN_TABS = 123;
+    int NOTHING = 321;
+
+    int STARKS_PAGE = 0;
+    int LANNISTERS_PAGE = 1;
+    int TARGARYENS_PAGE = 2;
+
 }

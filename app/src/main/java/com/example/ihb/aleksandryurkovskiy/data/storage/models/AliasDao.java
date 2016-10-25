@@ -16,29 +16,29 @@ import org.greenrobot.greendao.query.QueryBuilder;
 /** 
  * DAO for table "ALIASES".
 */
-public class AliaseDao extends AbstractDao<Aliase, Long> {
+public class AliasDao extends AbstractDao<Alias, Long> {
 
     public static final String TABLENAME = "ALIASES";
 
     /**
-     * Properties of entity Aliase.<br/>
+     * Properties of entity Alias.<br/>
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property CharacterRemoteId = new Property(1, Long.class, "characterRemoteId", false, "CHARACTER_REMOTE_ID");
-        public final static Property Aliase = new Property(2, String.class, "aliase", false, "ALIASE");
+        public final static Property Alias = new Property(2, String.class, "alias", false, "ALIAS");
     };
 
     private DaoSession daoSession;
 
-    private Query<Aliase> character_AliasesQuery;
+    private Query<Alias> character_AliasesQuery;
 
-    public AliaseDao(DaoConfig config) {
+    public AliasDao(DaoConfig config) {
         super(config);
     }
     
-    public AliaseDao(DaoConfig config, DaoSession daoSession) {
+    public AliasDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
         this.daoSession = daoSession;
     }
@@ -49,7 +49,10 @@ public class AliaseDao extends AbstractDao<Aliase, Long> {
         db.execSQL("CREATE TABLE " + constraint + "\"ALIASES\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
                 "\"CHARACTER_REMOTE_ID\" INTEGER," + // 1: characterRemoteId
-                "\"ALIASE\" TEXT);"); // 2: aliase
+                "\"ALIAS\" TEXT);"); // 2: alias
+        // Add Indexes
+        db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_ALIASES_CHARACTER_REMOTE_ID_ALIAS ON ALIASES" +
+                " (\"CHARACTER_REMOTE_ID\" ASC,\"ALIAS\" ASC);");
     }
 
     /** Drops the underlying database table. */
@@ -59,7 +62,7 @@ public class AliaseDao extends AbstractDao<Aliase, Long> {
     }
 
     @Override
-    protected final void bindValues(DatabaseStatement stmt, Aliase entity) {
+    protected final void bindValues(DatabaseStatement stmt, Alias entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();
@@ -72,14 +75,14 @@ public class AliaseDao extends AbstractDao<Aliase, Long> {
             stmt.bindLong(2, characterRemoteId);
         }
  
-        String aliase = entity.getAliase();
-        if (aliase != null) {
-            stmt.bindString(3, aliase);
+        String alias = entity.getAlias();
+        if (alias != null) {
+            stmt.bindString(3, alias);
         }
     }
 
     @Override
-    protected final void bindValues(SQLiteStatement stmt, Aliase entity) {
+    protected final void bindValues(SQLiteStatement stmt, Alias entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();
@@ -92,14 +95,14 @@ public class AliaseDao extends AbstractDao<Aliase, Long> {
             stmt.bindLong(2, characterRemoteId);
         }
  
-        String aliase = entity.getAliase();
-        if (aliase != null) {
-            stmt.bindString(3, aliase);
+        String alias = entity.getAlias();
+        if (alias != null) {
+            stmt.bindString(3, alias);
         }
     }
 
     @Override
-    protected final void attachEntity(Aliase entity) {
+    protected final void attachEntity(Alias entity) {
         super.attachEntity(entity);
         entity.__setDaoSession(daoSession);
     }
@@ -110,30 +113,30 @@ public class AliaseDao extends AbstractDao<Aliase, Long> {
     }    
 
     @Override
-    public Aliase readEntity(Cursor cursor, int offset) {
-        Aliase entity = new Aliase( //
+    public Alias readEntity(Cursor cursor, int offset) {
+        Alias entity = new Alias( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // characterRemoteId
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // aliase
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // alias
         );
         return entity;
     }
      
     @Override
-    public void readEntity(Cursor cursor, Aliase entity, int offset) {
+    public void readEntity(Cursor cursor, Alias entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setCharacterRemoteId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
-        entity.setAliase(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setAlias(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
      }
     
     @Override
-    protected final Long updateKeyAfterInsert(Aliase entity, long rowId) {
+    protected final Long updateKeyAfterInsert(Alias entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
     @Override
-    public Long getKey(Aliase entity) {
+    public Long getKey(Alias entity) {
         if(entity != null) {
             return entity.getId();
         } else {
@@ -147,15 +150,15 @@ public class AliaseDao extends AbstractDao<Aliase, Long> {
     }
     
     /** Internal query to resolve the "aliases" to-many relationship of Character. */
-    public List<Aliase> _queryCharacter_Aliases(Long characterRemoteId) {
+    public List<Alias> _queryCharacter_Aliases(Long characterRemoteId) {
         synchronized (this) {
             if (character_AliasesQuery == null) {
-                QueryBuilder<Aliase> queryBuilder = queryBuilder();
+                QueryBuilder<Alias> queryBuilder = queryBuilder();
                 queryBuilder.where(Properties.CharacterRemoteId.eq(null));
                 character_AliasesQuery = queryBuilder.build();
             }
         }
-        Query<Aliase> query = character_AliasesQuery.forCurrentThread();
+        Query<Alias> query = character_AliasesQuery.forCurrentThread();
         query.setParameter(0, characterRemoteId);
         return query.list();
     }

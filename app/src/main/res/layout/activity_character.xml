@@ -171,7 +171,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/spacing_bigger_44"
                         android:fontFamily="@string/ff_regular"
-                        android:text="Born:"
+                        android:text="Died:"
                         android:textColor="@color/black"
                         android:textSize="@dimen/font_normal_16"/>
 
@@ -279,7 +279,7 @@
                         android:textSize="@dimen/font_normal_16"/>
 
                     <Button
-                        android:id="@+id/father_tv"
+                        android:id="@+id/father_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/font_medium_34"
                         android:layout_marginLeft="120dp"
@@ -309,7 +309,7 @@
                         android:textSize="@dimen/font_normal_16"/>
 
                     <Button
-                        android:id="@+id/mother_tv"
+                        android:id="@+id/mother_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/font_medium_34"
                         android:layout_marginLeft="120dp"

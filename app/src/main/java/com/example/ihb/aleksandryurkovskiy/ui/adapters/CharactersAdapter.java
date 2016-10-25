@@ -32,8 +32,8 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Ch
     List<Character> mCharacters;
     CharacterViewHolder.CustomClickListener mCustomClickListener;
 
-    public CharactersAdapter(List<Character> users, CharacterViewHolder.CustomClickListener customClickListener) {
-        mCharacters = users;
+    public CharactersAdapter(List<Character> characters, CharacterViewHolder.CustomClickListener customClickListener) {
+        mCharacters = characters;
         this.mCustomClickListener = customClickListener;
     }
 
@@ -106,14 +106,14 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Ch
         @Override
         public void onClick(View v) {
             if(mListener != null){
-                mListener.onUserItemClickListener(getAdapterPosition());
+                mListener.onCharacterItemClickListener(getAdapterPosition());
             }
         }
 
 
         public interface CustomClickListener{
 
-            void onUserItemClickListener(int position);
+            void onCharacterItemClickListener(int position);
         }
     }
 }

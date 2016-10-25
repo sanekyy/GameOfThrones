@@ -27,6 +27,7 @@ public class BaseActivity extends AppCompatActivity {
         }
         mProgressDialog.show();
         mProgressDialog.setContentView(R.layout.progress_splash);
+
     }
 
     public void hideProgress(){

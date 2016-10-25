@@ -1,5 +1,6 @@
 package com.example.ihb.aleksandryurkovskiy.ui.activities;
 
+import android.content.Intent;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -8,29 +9,27 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
+import com.example.ihb.aleksandryurkovskiy.BuildConfig;
 import com.example.ihb.aleksandryurkovskiy.R;
-import com.example.ihb.aleksandryurkovskiy.data.managers.DataManager;
-import com.example.ihb.aleksandryurkovskiy.data.storage.models.DaoSession;
+import com.example.ihb.aleksandryurkovskiy.mvp.presenters.HomesTabsPresenter;
+import com.example.ihb.aleksandryurkovskiy.mvp.presenters.IHomesTabsPresenter;
+import com.example.ihb.aleksandryurkovskiy.mvp.views.IHomesTabsView;
 import com.example.ihb.aleksandryurkovskiy.ui.fragments.CharacterListFragment;
 import com.example.ihb.aleksandryurkovskiy.utils.ConstantManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class HomesTabsActivity extends BaseActivity {
+public class HomesTabsActivity extends BaseActivity implements IHomesTabsView {
 
+    IHomesTabsPresenter mPresenter = HomesTabsPresenter.getInstance();
 
     @BindView(R.id.main_coordinator_container)
     CoordinatorLayout mCoordinatorLayout;
@@ -51,12 +50,17 @@ public class HomesTabsActivity extends BaseActivity {
 
     FragmentPagerAdapter adapterViewPager;
 
+    //region ============== Life cycle ==============
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homes_tabs);
 
         ButterKnife.bind(this);
+
+        mPresenter.takeView(this);
+        mPresenter.initView();
 
         adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
         vpPager.setAdapter(adapterViewPager);
@@ -75,24 +79,60 @@ public class HomesTabsActivity extends BaseActivity {
                 vpPager.setCurrentItem(numPage);
             }
         }
-        if(DataManager.getInstance().getDaoSession().getCharacterDao().count()==0){
-            showSnackbar("Список героев не может быть получен");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPresenter.dropView();
+    }
+
+    //endregion
+
+    //region ============== IHomeTabsView ==============
+
+    @Override
+    public void showMessage(String message) {
+        Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showError(Throwable e) {
+        if(BuildConfig.DEBUG){
+            showMessage(e.getMessage());
+            e.printStackTrace();
+        } else {
+            showMessage("Извините, что-то пошло не так, попробуйте позже");
         }
     }
+
+    @Override
+    public IHomesTabsPresenter getPresenter() {
+        return mPresenter;
+    }
+
+    @Override
+    public void setCurrentPage(int pageId) {
+        vpPager.setCurrentItem(pageId);
+    }
+
+    @Override
+    public void startActivityForResult(Class clazz, Long characterId) {
+        Intent profileIntent = new Intent(this, clazz);
+        profileIntent.putExtra(CharacterActivity.CHARACTER_ID, characterId);
+        startActivityForResult(profileIntent, ConstantManager.NOTHING);
+    }
+
+    //endregion
 
     @Override
     public void onBackPressed() {
         if (mNavigationView.isShown()) {
             mNavigationDrawer.closeDrawer(GravityCompat.START);
         } else {
-            //setResult(ConstantManager.EXIT_APP_CODE);
             finish();
         }
     }
-
-
-
-
 
     private void setupToolbar() {
         setSupportActionBar(mToolbar);
@@ -109,25 +149,12 @@ public class HomesTabsActivity extends BaseActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-
-                switch (item.getItemId()){
-                    case R.id.starks_menu: vpPager.setCurrentItem(0);
-                        break;
-                    case R.id.lannisters_menu: vpPager.setCurrentItem(1);
-                        break;
-                    case R.id.targaryens_menu: vpPager.setCurrentItem(2);
-                        break;
-                    default: showSnackbar(item.getTitle().toString());
-                }
+                mPresenter.onNavigationItemClicked(item);
                 item.setChecked(true);
                 mNavigationDrawer.closeDrawer(GravityCompat.START);
                 return false;
             }
         });
-    }
-
-    private void showSnackbar(String message){
-        Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -138,10 +165,6 @@ public class HomesTabsActivity extends BaseActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
-
-
 
 
     public static class MyPagerAdapter extends FragmentPagerAdapter {
@@ -159,11 +182,11 @@ public class HomesTabsActivity extends BaseActivity {
         @Override
         public Fragment getItem(int position) {
             switch (position) {
-                case 0:
+                case ConstantManager.STARKS_PAGE:
                     return CharacterListFragment.newInstance(ConstantManager.STARKS_HOME);
-                case 1:
+                case ConstantManager.LANNISTERS_PAGE:
                     return CharacterListFragment.newInstance(ConstantManager.LANNISTERS_HOME);
-                case 2:return CharacterListFragment.newInstance(ConstantManager.TARGARYENS_HOME);
+                case ConstantManager.TARGARYENS_PAGE:return CharacterListFragment.newInstance(ConstantManager.TARGARYENS_HOME);
             }
             return null;
         }
@@ -171,12 +194,11 @@ public class HomesTabsActivity extends BaseActivity {
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position){
-                case 0: return "STARKS";
-                case 1: return "LANNISTERS";
-                case 2: return "TARGARYENS";
+                case ConstantManager.STARKS_PAGE: return "STARKS";
+                case ConstantManager.LANNISTERS_PAGE: return "LANNISTERS";
+                case ConstantManager.TARGARYENS_PAGE: return "TARGARYENS";
             }
             return "_error_";
         }
-
     }
 }

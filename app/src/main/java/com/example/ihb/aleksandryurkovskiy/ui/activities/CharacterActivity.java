@@ -1,5 +1,5 @@
 package com.example.ihb.aleksandryurkovskiy.ui.activities;
-;
+
 import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -15,15 +15,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.ihb.aleksandryurkovskiy.BuildConfig;
 import com.example.ihb.aleksandryurkovskiy.R;
-import com.example.ihb.aleksandryurkovskiy.data.managers.DataManager;
-import com.example.ihb.aleksandryurkovskiy.data.storage.models.CharacterDTO;
-import com.example.ihb.aleksandryurkovskiy.data.storage.models.CharacterDao;
-import com.example.ihb.aleksandryurkovskiy.ui.fragments.CharacterListFragment;
+import com.example.ihb.aleksandryurkovskiy.mvp.presenters.CharacterPresenter;
+import com.example.ihb.aleksandryurkovskiy.mvp.presenters.ICharacterPresentor;
+import com.example.ihb.aleksandryurkovskiy.mvp.views.ICharacterView;
 import com.example.ihb.aleksandryurkovskiy.utils.ConstantManager;
 import com.example.ihb.aleksandryurkovskiy.utils.Utils;
 
@@ -33,9 +34,11 @@ import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
 
-public class CharacterActivity extends BaseActivity {
-
+public class CharacterActivity extends BaseActivity implements ICharacterView, View.OnClickListener {
     private static final String TAG = ConstantManager.TAG_PREFIX + " ProfileUserActivit";
+    public static final String CHARACTER_ID = "CHARACTER_ID";
+
+    CharacterPresenter mPresenter = new CharacterPresenter();
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -47,7 +50,7 @@ public class CharacterActivity extends BaseActivity {
     NavigationView mNavigationView;
 
     @BindView(R.id.home_main_iv)
-    ImageView mHomeImage;
+    ImageView mHomeImg;
 
     @BindView(R.id.words_tv)
     TextView mWords;
@@ -59,17 +62,15 @@ public class CharacterActivity extends BaseActivity {
     TextView mTitles;
     @BindView(R.id.aliases_tv)
     TextView mAliases;
-    @BindView(R.id.father_tv)
-    TextView mFather;
-    @BindView(R.id.mother_tv)
-    TextView mMother;
+    @BindView(R.id.father_btn)
+    Button mFather;
+    @BindView(R.id.mother_btn)
+    Button mMother;
 
     @BindViews({R.id.home_1_iv, R.id.home_2_iv, R.id.home_3_iv, R.id.home_4_iv, R.id.home_5_iv})
     List<ImageView> mIcons;
 
-    CharacterDao mCharacterDao;
-
-    String died;
+    //region ============== Life cycle ==============
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,34 +79,178 @@ public class CharacterActivity extends BaseActivity {
 
         ButterKnife.bind(this);
 
-        mCharacterDao = DataManager.getInstance().getDaoSession().getCharacterDao();
-
         setupToolbar();
-        initCharacterData();
-        setupHomeImage();
         setupDrawer();
+
+        mPresenter.takeView(this);
+        mPresenter.setCharacterId(getIntent().getLongExtra(CHARACTER_ID,0));
+        mPresenter.initView();
+
+        mFather.setOnClickListener(this);
+        mMother.setOnClickListener(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(died!=null&&!"".equals(died)){
-            showSnackbar("Died " + died);
+        mPresenter.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mPresenter.dropView();
+        super.onDestroy();
+    }
+
+    //endregion
+
+    //region ============== IAuthView ==============
+
+    @Override
+    public void showMessage(String message) {
+        Snackbar.make(findViewById(R.id.main_layout), message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showError(Throwable e) {
+        if(BuildConfig.DEBUG){
+            showMessage(e.getMessage());
+            e.printStackTrace();
+        } else {
+            showMessage("Извините, что-то пошло не так, попробуйз позже");
         }
     }
 
-    void setupHomeImage(){
-        ViewGroup.LayoutParams layoutParams = mHomeImage.getLayoutParams();
+    @Override
+    public ICharacterPresentor getPresenter() {
+        return mPresenter;
+    }
+
+    @Override
+    public void startActivity(Class clazz, Bundle bundle) {
+        Intent intent = new Intent(CharacterActivity.this, clazz);
+        intent.putExtras(bundle);
+        startActivityForResult(intent, ConstantManager.NOTHING);
+    }
+
+    @Override
+    public void startActivityAndFinish(Class clazz, Bundle bundle, int resultCode) {
+        startActivity(clazz, bundle);
+        setResult(resultCode);
+        finish();
+    }
+
+    @Override
+    public void setTitle(String characterName) {
+        mCollapsingToolbarLayout.setTitle(characterName);
+    }
+
+    @Override
+    public void setHomeImg(int imgId) {
+        ViewGroup.LayoutParams layoutParams = mHomeImg.getLayoutParams();
 
         Point size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
 
-        Drawable drawable = getResources().getDrawable(R.drawable.stark);
+        Drawable drawable = getResources().getDrawable(imgId);
 
         layoutParams.height = (int) ((double) size.x * (double) drawable.getMinimumHeight()/ (double) drawable.getMinimumWidth());
-        mHomeImage.setLayoutParams(layoutParams);
+        mHomeImg.setLayoutParams(layoutParams);
 
-        mHomeImage.requestLayout();
+        mHomeImg.requestLayout();
+
+        mHomeImg.setImageResource(imgId);
+    }
+
+    @Override
+    public void setHomeIcons(int iconId) {
+        for(ImageView view : mIcons) {
+            view.setImageResource(iconId);
+            view.setImageResource(iconId);
+            view.setImageResource(iconId);
+        }
+    }
+
+    @Override
+    public void setWords(String words) {
+        mWords.setText(words);
+    }
+
+    @Override
+    public void setBorn(String born) {
+        mBorn.setText(born);
+    }
+
+    @Override
+    public void setDied(String died) {
+        mDied.setText(died);
+    }
+
+    @Override
+    public void setTitles(List<String> titles) {
+        mTitles.setText(Utils.joinString(titles, "\n"));
+    }
+
+    @Override
+    public void setAliases(List<String> aliases) {
+        mAliases.setText(Utils.joinString(aliases, "\n"));
+    }
+
+    @Override
+    public void setFather(String father) {
+        mFather.setText(father);
+    }
+
+    @Override
+    public void setMother(String mother) {
+        mMother.setText(mother);
+    }
+
+    @Override
+    public void hideWords() {
+        ((LinearLayout) findViewById(R.id.main_layout)).removeView(findViewById(R.id.words_layout));
+    }
+
+    @Override
+    public void hideBorn() {
+        ((LinearLayout) findViewById(R.id.main_layout)).removeView(findViewById(R.id.born_layout));
+    }
+
+    @Override
+    public void hideDied() {
+        ((LinearLayout) findViewById(R.id.main_layout)).removeView(findViewById(R.id.died_layout));
+    }
+
+    @Override
+    public void hideTitles() {
+        ((LinearLayout) findViewById(R.id.main_layout)).removeView(findViewById(R.id.titles_layout));
+    }
+
+    @Override
+    public void hideAliases() {
+        ((LinearLayout) findViewById(R.id.main_layout)).removeView(findViewById(R.id.aliases_layout));
+    }
+
+    @Override
+    public void hideFather() {
+        ((LinearLayout) findViewById(R.id.main_layout)).removeView(findViewById(R.id.father_layout));
+    }
+
+    @Override
+    public void hideMother() {
+        ((LinearLayout) findViewById(R.id.main_layout)).removeView(findViewById(R.id.mother_layout));
+    }
+
+    //endregion
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==ConstantManager.OPEN_TABS){
+            setResult(ConstantManager.OPEN_TABS);
+            finish();
+        }
     }
 
     private void setupDrawer() {
@@ -113,33 +258,13 @@ public class CharacterActivity extends BaseActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-
-                Bundle bundle = new Bundle();
-                switch (item.getItemId()){
-                    case R.id.starks_menu: bundle.putInt(CharacterListFragment.ARGUMENT_PAGE_NUMBER, 0);
-                        break;
-                    case R.id.lannisters_menu: bundle.putInt(CharacterListFragment.ARGUMENT_PAGE_NUMBER, 1);
-                        break;
-                    case R.id.targaryens_menu: bundle.putInt(CharacterListFragment.ARGUMENT_PAGE_NUMBER, 2);
-                        break;
-                    default: showSnackbar(item.getTitle().toString());
-                }
+                mPresenter.onNavigationItemClicked(item);
                 item.setChecked(true);
                 mNavigationDrawer.closeDrawer(GravityCompat.START);
-                Intent intent = new Intent(CharacterActivity.this, HomesTabsActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
                 return false;
             }
         });
     }
-
-    private void showSnackbar(String message){
-        Snackbar.make(findViewById(R.id.main_layout), message, Snackbar.LENGTH_LONG).show();
-    }
-
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -159,101 +284,13 @@ public class CharacterActivity extends BaseActivity {
 
     }
 
-    private void initCharacterData(){
-        final CharacterDTO characterDTO = getIntent().getParcelableExtra(ConstantManager.PARCELABLE_KEY);
-
-        mCollapsingToolbarLayout.setTitle(characterDTO.getName());
-
-        switch (characterDTO.getHome()){
-            case ConstantManager.LANNISTERS_HOME: mHomeImage.setImageResource(R.drawable.lannister);
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.father_btn: mPresenter.onFatherClicked();
                 break;
-            case ConstantManager.STARKS_HOME: mHomeImage.setImageResource(R.drawable.stark);
-                break;
-            case ConstantManager.TARGARYENS_HOME: mHomeImage.setImageResource(R.drawable.targarien);
+            case R.id.mother_btn: mPresenter.onMotherClicked();
                 break;
         }
-
-        for(ImageView view : mIcons){
-            switch (characterDTO.getHome()){
-                case ConstantManager.LANNISTERS_HOME: view.setImageResource(R.drawable.lanister_icon);
-                    break;
-                case ConstantManager.STARKS_HOME: view.setImageResource(R.drawable.stark_icon);
-                    break;
-                case ConstantManager.TARGARYENS_HOME: view.setImageResource(R.drawable.targaryens_icon);
-                    break;
-            }
-        }
-
-
-        if(characterDTO.getWords()==null||"".equals(characterDTO.getWords())){
-            ((LinearLayout) findViewById(R.id.main_layout)).removeView(findViewById(R.id.words_layout));
-        } else {
-            mWords.setText(characterDTO.getWords());
-        }
-
-        if(characterDTO.getBorn()==null||"".equals(characterDTO.getBorn())){
-            ((LinearLayout) findViewById(R.id.main_layout)).removeView(findViewById(R.id.born_layout));
-        } else {
-            mBorn.setText(characterDTO.getBorn());
-        }
-
-        if(characterDTO.getDied()==null||"".equals(characterDTO.getDied())){
-            ((LinearLayout) findViewById(R.id.main_layout)).removeView(findViewById(R.id.died_layout));
-        } else {
-            mDied.setText(characterDTO.getDied());
-        }
-
-        if(characterDTO.getTitles()==null||characterDTO.getTitles().size()==0){
-            ((LinearLayout) findViewById(R.id.main_layout)).removeView(findViewById(R.id.titles_layout));
-        } else {
-            mTitles.setText(Utils.joinString(characterDTO.getTitles(), "\n"));
-        }
-
-        if(characterDTO.getAliases()==null||characterDTO.getAliases().size()==0){
-            ((LinearLayout) findViewById(R.id.main_layout)).removeView(findViewById(R.id.aliases_layout));
-        } else {
-            mAliases.setText(Utils.joinString(characterDTO.getAliases(), "\n"));
-        }
-
-        if(characterDTO.getFather()==null||characterDTO.getFather().equals(0L)||mCharacterDao.queryBuilder().where(CharacterDao.Properties.RemoteId.between(characterDTO.getFather()*1000, (characterDTO.getFather()+1)*1000)).count()==0){
-            ((LinearLayout) findViewById(R.id.main_layout)).removeView(findViewById(R.id.father_layout));
-        } else {
-            mFather.setText(mCharacterDao.queryBuilder().where(CharacterDao.Properties.RemoteId.between(characterDTO.getFather()*1000, (characterDTO.getFather()+1)*1000)).unique().getName());
-            mFather.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    Long fatherId = ((CharacterDTO) getIntent().getParcelableExtra(ConstantManager.PARCELABLE_KEY)).getFather();
-
-                    CharacterDTO characterDTO = new CharacterDTO(mCharacterDao.queryBuilder().where(CharacterDao.Properties.RemoteId.between(fatherId*1000, (fatherId+1)*1000)).unique());
-
-                    Intent profileIntent = new Intent(CharacterActivity.this, CharacterActivity.class);
-                    profileIntent.putExtra(ConstantManager.PARCELABLE_KEY, characterDTO);
-
-                    startActivity(profileIntent);
-                }
-            });
-        }
-
-        if(characterDTO.getMother()==null||characterDTO.getMother().equals(0L)||mCharacterDao.queryBuilder().where(CharacterDao.Properties.RemoteId.between(characterDTO.getMother()*1000, (characterDTO.getMother()+1)*1000)).count()==0){
-            ((LinearLayout) findViewById(R.id.main_layout)).removeView(findViewById(R.id.mother_layout));
-        } else {
-            mMother.setText(mCharacterDao.queryBuilder().where(CharacterDao.Properties.RemoteId.between(characterDTO.getMother()*1000, (characterDTO.getMother()+1)*1000)).unique().getName());
-            mMother.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    Long motherId = ((CharacterDTO) getIntent().getParcelableExtra(ConstantManager.PARCELABLE_KEY)).getMother();
-
-                    CharacterDTO characterDTO = new CharacterDTO(mCharacterDao.queryBuilder().where(CharacterDao.Properties.RemoteId.between(motherId*1000, (motherId+1)*1000)).unique());
-
-                    Intent profileIntent = new Intent(CharacterActivity.this, CharacterActivity.class);
-                    profileIntent.putExtra(ConstantManager.PARCELABLE_KEY, characterDTO);
-
-                    startActivity(profileIntent);
-                }
-            });
-        }
-
     }
 }

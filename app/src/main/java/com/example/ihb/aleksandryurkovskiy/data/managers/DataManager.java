@@ -10,7 +10,6 @@ import com.example.ihb.aleksandryurkovskiy.data.storage.models.Character;
 import com.example.ihb.aleksandryurkovskiy.data.storage.models.CharacterDao;
 import com.example.ihb.aleksandryurkovskiy.data.storage.models.DaoSession;
 import com.example.ihb.aleksandryurkovskiy.utils.MyApplication;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,14 +62,14 @@ public class DataManager {
         return mRestService.getCharacter(characterId);
     }
 
-    public List<Character> getCharacterOfHouseListFromDb(int houseNumber) {
-        List<Character> userList = new ArrayList<>();
+    public List<Character> getCharacterListFromDbByHomeId(int houseId) {
+        List<Character> charactersList = new ArrayList<>();
 
         try {
-            userList = mDaoSession.getCharacterDao().queryBuilder().where(CharacterDao.Properties.Home.eq(houseNumber)).list();
+            charactersList = mDaoSession.getCharacterDao().queryBuilder().where(CharacterDao.Properties.Home.eq(houseId)).list();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return userList;
+        return charactersList;
     }
 }

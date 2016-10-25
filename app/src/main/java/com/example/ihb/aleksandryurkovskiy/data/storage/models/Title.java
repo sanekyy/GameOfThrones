@@ -1,17 +1,20 @@
 package com.example.ihb.aleksandryurkovskiy.data.storage.models;
 
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.annotation.Index;
 
 /**
  * Created by ihb on 14.10.16.
  */
 
-@Entity(active = true, nameInDb = "TITLES")
+@Entity(active = true, nameInDb = "TITLES",
+        indexes = {@Index(value = "characterRemoteId, title", unique = true)})
 public class Title {
 
     @Id
@@ -33,6 +36,8 @@ public class Title {
         characterRemoteId = characterId;
         this.title = title;
     }
+
+
 
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
@@ -111,4 +116,5 @@ public class Title {
     @Generated(hash = 177602963)
     public Title() {
     }
+
 }

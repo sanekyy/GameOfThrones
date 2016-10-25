@@ -50,6 +50,9 @@ public class TitleDao extends AbstractDao<Title, Long> {
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
                 "\"CHARACTER_REMOTE_ID\" INTEGER," + // 1: characterRemoteId
                 "\"TITLE\" TEXT);"); // 2: title
+        // Add Indexes
+        db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_TITLES_CHARACTER_REMOTE_ID_TITLE ON TITLES" +
+                " (\"CHARACTER_REMOTE_ID\" ASC,\"TITLE\" ASC);");
     }
 
     /** Drops the underlying database table. */
